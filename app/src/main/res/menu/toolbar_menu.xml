@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
+    <!--    <item-->
+    <!--        android:id="@+id/backup"-->
+    <!--        android:icon="@drawable/ic_time"-->
+    <!--        android:title="Backup"-->
+    <!--        app:showAsAction="always"/>-->
+    <item
+        android:id="@+id/add"
+        android:icon="@drawable/ic_add"
+        android:title="Add"
+        app:showAsAction="always"/>
+    <item
+        android:id="@+id/to_wenxin"
+        android:icon="@drawable/ic_bot"
+        android:title="Add"
+        app:showAsAction="always"/>
+    <item
+        android:id="@+id/items"
+        android:icon="@drawable/ic_list"
+        android:title="Items"
+        app:showAsAction="never"/>
+</menu>

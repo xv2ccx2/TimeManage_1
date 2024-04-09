@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="20dp"
+    android:layout_marginRight="20dp"
+    android:orientation="vertical"
+    android:layout_gravity="center"
+    android:background="@color/white">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp">
+
+        <TextView
+            android:id="@+id/dialog_desc_text_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="15dp"
+            android:text="谁也别惹我 快去学习"
+            android:textSize="20sp"
+            android:textColor="@color/black" />
+
+        <TextView
+            android:id="@+id/dialog_desc_text_info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="30dp"
+            android:layout_below="@+id/dialog_desc_text_title"
+            android:text="哥们学习呢 要干嘛去啊(3s后强制返回哈)"
+            android:textSize="15sp"
+            android:textColor="@color/black" />
+
+<!--        <TextView-->
+<!--            android:id="@+id/dialog_desc_text_cancel"-->
+<!--            android:layout_width="60dp"-->
+<!--            android:layout_height="35dp"-->
+<!--            android:layout_marginTop="20dp"-->
+<!--            android:layout_below="@+id/dialog_desc_text_info"-->
+<!--            android:layout_toLeftOf="@+id/dialog_desc_text_determine"-->
+<!--            android:gravity="center"-->
+<!--            android:text="取消"-->
+<!--            android:textSize="13sp"-->
+<!--            android:textColor="@color/black"-->
+<!--            android:background="@drawable/shape_btn_white_bg" />-->
+
+        <TextView
+            android:id="@+id/dialog_desc_text_determine"
+            android:layout_width="60dp"
+            android:layout_height="35dp"
+            android:layout_below="@+id/dialog_desc_text_info"
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="20dp"
+            android:layout_alignParentRight="true"
+            android:gravity="center"
+            android:text="确定"
+            android:textSize="13sp"
+            android:textColor="@color/white"
+            android:background="@color/black" />
+    </RelativeLayout>
+</LinearLayout>
