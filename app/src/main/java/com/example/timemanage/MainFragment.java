@@ -238,6 +238,12 @@ public class MainFragment extends Fragment {
                     values.put("week",week);
                     values.put("category",t5);
                     db.insert("Course",null,values);
+                    MainActivity.sqLiteDatabase = new DatabaseHelper(getContext(),"Course.db",null,1)
+                            .getWritableDatabase();
+                    mainContext.stopService(MainActivity.autoLock);
+                    MainActivity.autoLock = new Intent(mainContext,AutoLockService.class);
+                    mainContext.startService(MainActivity.autoLock);
+
 //                String name ="";
 //                //Cursor cursor = db.query("Course", null, null, null, null, null, null);
 //                while (cursor.moveToNext()){

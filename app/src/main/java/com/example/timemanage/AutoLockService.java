@@ -93,7 +93,7 @@ public class AutoLockService extends Service {
             for (int j = 0; j < count;j++){
                 if(hour == sh[j]){
                     if(sm[j] - m >= 0){
-                        if(closeM > sm[j] - m){
+                        if(Math.abs(closeM) > sm[j] - m){
                             closeM = sh[j] - m;
                             index = j;
                         }

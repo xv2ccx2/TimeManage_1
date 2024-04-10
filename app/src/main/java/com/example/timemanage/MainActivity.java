@@ -5,8 +5,13 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.provider.Settings;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -23,6 +28,9 @@ public class MainActivity extends AppCompatActivity {
     static SQLiteDatabase sqLiteDatabase;
 
     private DatabaseHelper myDatabaseHelper;
+    private BottomNavigationView bottomNavigationItemView;
+
+    static Intent autoLock;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
         fragment_statistic = new StatisticFragment();
         fragmentTransaction.add(R.id.fragment_layout,fragment_main);
         fragmentTransaction.commit();
-        BottomNavigationView bottomNavigationItemView = findViewById(R.id.bottomnavigation);
+        bottomNavigationItemView = findViewById(R.id.bottomnavigation);
 
         myDatabaseHelper = new DatabaseHelper(this,"Course.db",null,1);
         myDatabaseHelper.getWritableDatabase();
@@ -48,8 +56,8 @@ public class MainActivity extends AppCompatActivity {
         MainActivity.sqLiteDatabase = new DatabaseHelper(this,"Course.db",null,1)
                 .getWritableDatabase();
 
-        Intent intent = new Intent(MainActivity.this, AutoLockService.class);
-        startService(intent);
+        autoLock = new Intent(MainActivity.this, AutoLockService.class);
+        startService(autoLock);
 
         bottomNavigationItemView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
             @Override
@@ -74,5 +82,62 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }
         });
+
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                checkTopPermission();
+            }
+        },2000);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if(fragment_lock!=null) {
+            ((LockFragment) fragment_lock).checkIsBack();
+        }
+
+    }
+
+    public void checkTopPermission(){
+        if (!Settings.canDrawOverlays(this)) {
+            Toast.makeText(this, "当前无权限，请授权悬浮窗权限", Toast.LENGTH_SHORT);
+            startActivityForResult(new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:" + getPackageName())), 1);
+        }
+    }
+
+    public void showNav(){
+        bottomNavigationItemView.setVisibility(View.VISIBLE);
+    }
+    public void hideNav(){
+        bottomNavigationItemView.setVisibility(View.GONE);
+
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 0) {
+            if (!Settings.canDrawOverlays(this)) {
+                Toast.makeText(this, "授权失败", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, "授权成功", Toast.LENGTH_SHORT).show();
+            }
+        } else if (requestCode == 1) {
+            if (!Settings.canDrawOverlays(this)) {
+                Toast.makeText(this, "授权失败", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, "授权成功", Toast.LENGTH_SHORT).show();
+            }
+        } else if (requestCode == 2) {
+            if (!Settings.canDrawOverlays(this)) {
+                Toast.makeText(this, "授权失败", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, "授权成功", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 }

@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-permission android:name="android.permission.REORDER_TASKS" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
@@ -48,9 +49,11 @@
             </intent-filter>
         </activity>
 
+
         <service android:name=".popup.FloatingButtonService" />
         <service android:name=".popup.FloatingImageDisplayService" />
         <service android:name=".popup.FloatingVideoService" />
+        <receiver android:name=".HomeReceiver" android:exported="true" android:enabled="true"/>
     </application>
 
 </manifest>

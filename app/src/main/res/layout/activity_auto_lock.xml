@@ -13,7 +13,7 @@
         android:id="@+id/question"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="123"
+        android:text="设随机变量X~U(0,3),随机变量Y服从参数为2的泊松分布，且X与Y的协方差为-1，则D(2X-Y+1)=()"
         android:textSize="20dp"
         />
     <LinearLayout
@@ -37,5 +37,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="确定"
+        />
+    <Chronometer
+        android:id="@+id/simple_c"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         />
 </LinearLayout>

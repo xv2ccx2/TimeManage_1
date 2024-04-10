@@ -1,5 +1,6 @@
 package com.example.timemanage;
 
+import static android.content.Context.ACTIVITY_SERVICE;
 import static android.content.Context.WINDOW_SERVICE;
 
 import static androidx.core.content.ContextCompat.getSystemService;
@@ -85,6 +86,7 @@ public class LockFragment extends Fragment {
     private EditText editText;
     private View root;
     private boolean isGoTime = false;
+
     public LockFragment() {
         // Required empty public constructor
     }
@@ -119,21 +121,27 @@ public class LockFragment extends Fragment {
     //实现弹窗操作 当activity不在前台时 跳出弹窗
 
 
-    public void checkIsBack(){
-        boolean foreground = isForeground(getActivity());
-        Log.e("TAG", "onPause: 是否在后台"+foreground );
-        if(foreground&&isGoTime){
+    public void checkIsBack() {
+        if (isGoTime) {
             Toast.makeText(getActivity().getApplication(), "3秒后自动切换到前台", Toast.LENGTH_SHORT).show();
-            Handler handler = new Handler();
-            handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
+        }
+
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                boolean foreground = isForeground(getActivity());
+
+                if (foreground && isGoTime) {
                     Intent intent = new Intent(getActivity(), MainActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                     startActivity(intent);
+                    Log.e("TAG", "onPause: 是否在后台" + foreground);
                 }
-            }, 3000); // 延迟3秒
-        }
+
+
+            }
+        }, 3000); // 延迟3秒
     }
 
 
@@ -200,13 +208,21 @@ public class LockFragment extends Fragment {
         btnStart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast t = Toast.makeText(context, "开始记时", Toast.LENGTH_LONG);
-                t.show();
                 String ss = editText.getText().toString();
                 if (ss.isEmpty()) {
                     Toast.makeText(context, "没有填写时间", Toast.LENGTH_LONG).show();
                     return;
                 }
+                if (!Settings.canDrawOverlays(getContext())) {
+                    Toast.makeText(context, "需要悬浮窗权限", Toast.LENGTH_SHORT).show();
+
+                    ((MainActivity)getActivity()).checkTopPermission();
+                    return;
+                }
+                Toast t = Toast.makeText(context, "开始记时", Toast.LENGTH_LONG);
+
+                t.show();
+
                 if (!(ss.equals("") && ss != null)) {
                     startTime = Integer.parseInt(editText.getText().toString());
                 }
@@ -214,7 +230,8 @@ public class LockFragment extends Fragment {
                 chronometer.setBase(SystemClock.elapsedRealtime() - recordingTime);
                 // 开始记时
                 chronometer.start();
-                isGoTime=true;
+                ((MainActivity)getActivity()).hideNav();
+                isGoTime = true;
                 btnStart.setVisibility(View.GONE);
                 btnWait.setVisibility(View.VISIBLE);
                 btnStop.setVisibility(View.VISIBLE);
@@ -233,26 +250,51 @@ public class LockFragment extends Fragment {
                 btnStart.setVisibility(View.VISIBLE);
                 btnWait.setVisibility(View.GONE);
                 btnStop.setVisibility(View.VISIBLE);
-                btnRest.setVisibility(View.VISIBLE);
-                isGoTime=false;
+                btnRest.setVisibility(View.GONE);
+                ((MainActivity)getActivity()).showNav();
+
+                isGoTime = false;
 
             }
         });
         btnStop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // 停止
-                Toast t = Toast.makeText(context, "停止记时", Toast.LENGTH_LONG);
-                t.show();
-                //总时间
-                sum_time = (SystemClock.elapsedRealtime() - chronometer.getBase() - recordingTime) / (60 * 1000);
-                recordingTime = 0;
-                chronometer.stop();
-                btnStart.setVisibility(View.VISIBLE);
-                btnWait.setVisibility(View.GONE);
-                btnStop.setVisibility(View.GONE);
-                btnRest.setVisibility(View.GONE);
-                isGoTime=false;
+
+                androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(context);
+                builder.setIcon(R.drawable.clock);
+                builder.setTitle("温馨提示：").setMessage("是否要停止计时")
+                        .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                // 停止
+                                Toast t = Toast.makeText(context, "停止记时", Toast.LENGTH_LONG);
+                                t.show();
+                                //总时间
+                                sum_time = (SystemClock.elapsedRealtime() - chronometer.getBase() - recordingTime) / (60 * 1000);
+                                recordingTime = 0;
+                                chronometer.stop();
+                                btnStart.setVisibility(View.GONE);
+                                btnWait.setVisibility(View.GONE);
+                                btnStop.setVisibility(View.GONE);
+                                btnRest.setVisibility(View.VISIBLE);
+                                ((MainActivity)getActivity()).showNav();
+
+                                isGoTime = false;
+
+                            }
+                        })
+                        .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+                AlertDialog dialog = builder.create();
+                dialog.show();
+
+
+
 
 //                    recordChronometer.setBase(SystemClock.elapsedRealtime());
             }
@@ -270,7 +312,9 @@ public class LockFragment extends Fragment {
                 btnWait.setVisibility(View.GONE);
                 btnStop.setVisibility(View.GONE);
                 btnRest.setVisibility(View.GONE);
-                isGoTime=false;
+                ((MainActivity)getActivity()).showNav();
+
+                isGoTime = false;
 
             }
         });
@@ -284,6 +328,8 @@ public class LockFragment extends Fragment {
                                                              sum_time = Integer.parseInt(editText.getText().toString());
                                                              // 给用户提示
                                                              showDialog();
+                                                             ((MainActivity)getActivity()).showNav();
+
                                                          }
                                                      }
                                                  }
@@ -314,7 +360,7 @@ public class LockFragment extends Fragment {
      * 判断某个activity是否在前台显示
      */
     public static boolean isForeground(Activity activity) {
-        ActivityManager activityManager = (ActivityManager) activity.getSystemService(Context.ACTIVITY_SERVICE);
+        ActivityManager activityManager = (ActivityManager) activity.getSystemService(ACTIVITY_SERVICE);
         List<ActivityManager.RunningAppProcessInfo> appProcesses = activityManager.getRunningAppProcesses();
         boolean isBackground = true;
         String processName = "empty";
@@ -340,7 +386,7 @@ public class LockFragment extends Fragment {
     public static boolean isForeground(Activity context, String className) {
         if (context == null || TextUtils.isEmpty(className))
             return false;
-        ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        ActivityManager am = (ActivityManager) context.getSystemService(ACTIVITY_SERVICE);
         List<ActivityManager.RunningTaskInfo> list = am.getRunningTasks(1);
         if (list != null && list.size() > 0) {
             ComponentName cpn = list.get(0).topActivity;
