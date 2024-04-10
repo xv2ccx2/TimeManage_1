@@ -4,8 +4,12 @@
 
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
+        android:name=".MyApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -13,16 +17,23 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:name=".MyApplication"
         android:theme="@style/Theme.TimeManage"
         tools:targetApi="31">
+        <service
+            android:name=".AutoLockService"
+            android:enabled="true"
+            android:exported="true"></service>
+
+        <activity
+            android:name=".AutoLockActivity"
+            android:exported="false" />
         <activity
             android:name=".WenXinTest"
             android:exported="false" />
         <activity
             android:name=".PopActivity"
-            android:theme="@style/Noting"
-            android:exported="true" />
+            android:exported="true"
+            android:theme="@style/Noting" />
         <activity
             android:name=".AddDialog"
             android:exported="false"

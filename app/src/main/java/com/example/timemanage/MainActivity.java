@@ -1,35 +1,26 @@
 package com.example.timemanage;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.Spinner;
-import android.widget.Toast;
-import androidx.appcompat.widget.Toolbar;
+
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import com.google.android.material.bottomnavigation.BottomNavigationItemView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
-
-import java.util.ArrayList;
-import java.util.zip.Inflater;
 
 public class MainActivity extends AppCompatActivity {
     private Fragment fragment_main;
     private Fragment fragment_lock;
     private Fragment fragment_statistic;
+
+    static SQLiteDatabase sqLiteDatabase;
 
     private DatabaseHelper myDatabaseHelper;
 
@@ -50,6 +41,16 @@ public class MainActivity extends AppCompatActivity {
         myDatabaseHelper.getWritableDatabase();
         myDatabaseHelper = new DatabaseHelper(this,"SCHEDULE.db",null,1);
         myDatabaseHelper.getWritableDatabase();
+        SQLiteDatabase db = new DatabaseHelper(this,"question.db",null,1)
+                .getWritableDatabase();
+        new InsertQuestion(db);
+
+        MainActivity.sqLiteDatabase = new DatabaseHelper(this,"Course.db",null,1)
+                .getWritableDatabase();
+
+        Intent intent = new Intent(MainActivity.this, AutoLockService.class);
+        startService(intent);
+
         bottomNavigationItemView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
@@ -66,6 +67,7 @@ public class MainActivity extends AppCompatActivity {
                         break;
                     case R.id.item_tab3:
                         fragmentTransaction.replace(R.id.fragment_layout, fragment_statistic);
+//                        Intent serviceIntent = new Intent(getBaseContext(), AutoLockService.class);
                         break;
                 }
                 fragmentTransaction.commit();

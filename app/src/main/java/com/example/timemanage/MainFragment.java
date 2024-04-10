@@ -126,7 +126,7 @@ public class MainFragment extends Fragment {
                 Fragment fragment = new ShowCourseFragment(week);
                 FragmentManager fragmentManager = getChildFragmentManager();;
                 FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                fragmentTransaction.add(R.id.fragment_layout_2,fragment);
+                fragmentTransaction.replace(R.id.fragment_layout_2,fragment);
                 fragmentTransaction.commit();
             }
 
@@ -156,6 +156,7 @@ public class MainFragment extends Fragment {
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.activity_add_dialog, null);
         EditText editText = view.findViewById(R.id.editText);
         Spinner week_spinner = (Spinner) view.findViewById(R.id.week_spinner);
+        Spinner category_spinner = (Spinner) view.findViewById(R.id.categoryspinner);
         Spinner time_spinner_1 = (Spinner) view.findViewById(R.id.time_spinner_1);
         Spinner time_spinner_2 = (Spinner) view.findViewById(R.id.time_spinner_2);
         Spinner time_spinner_3 = (Spinner) view.findViewById(R.id.time_spinner_3);
@@ -163,6 +164,7 @@ public class MainFragment extends Fragment {
         ArrayList<String> arrayList = new ArrayList<>();
         ArrayList<String> arrayList2 = new ArrayList<>();
         ArrayList<String> arrayList3 = new ArrayList<>();
+        ArrayList<String> arrayList4 = new ArrayList<>();
         arrayList.add("周一");
         arrayList.add("周二");
         arrayList.add("周三");
@@ -176,6 +178,7 @@ public class MainFragment extends Fragment {
         arrayList2.add("11");arrayList2.add("12");arrayList2.add("13");arrayList2.add("14");arrayList2.add("15");
         arrayList2.add("16");arrayList2.add("17");arrayList2.add("18");arrayList2.add("19");arrayList2.add("20");
         arrayList2.add("21");arrayList2.add("22");arrayList2.add("23");
+        arrayList4.add("学习");arrayList4.add("娱乐");arrayList4.add("运动");arrayList4.add("其他");
         for (int i = 0;i < 60;i++){
             String a = String.format("%02d",i);
             arrayList3.add(a);
@@ -183,7 +186,9 @@ public class MainFragment extends Fragment {
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(mainContext, androidx.appcompat.R.layout.support_simple_spinner_dropdown_item,arrayList);
         ArrayAdapter<String> arrayAdapter2 = new ArrayAdapter<>(mainContext, androidx.appcompat.R.layout.support_simple_spinner_dropdown_item,arrayList2);
         ArrayAdapter<String> arrayAdapter3 = new ArrayAdapter<>(mainContext, androidx.appcompat.R.layout.support_simple_spinner_dropdown_item,arrayList3);
+        ArrayAdapter<String> arrayAdapter4 = new ArrayAdapter<>(mainContext, androidx.appcompat.R.layout.support_simple_spinner_dropdown_item,arrayList4);
         week_spinner.setAdapter(arrayAdapter);
+        category_spinner.setAdapter(arrayAdapter4);
         time_spinner_1.setAdapter(arrayAdapter2);
         time_spinner_2.setAdapter(arrayAdapter3);
         time_spinner_3.setAdapter(arrayAdapter2);
@@ -206,6 +211,7 @@ public class MainFragment extends Fragment {
                 String t2 = time_spinner_2.getSelectedItem().toString();
                 String t3 = time_spinner_3.getSelectedItem().toString();
                 String t4 = time_spinner_4.getSelectedItem().toString();
+                String t5 = category_spinner.getSelectedItem().toString();
 
                 if((editText.getText() == null) || (Integer.parseInt(t1) > Integer.parseInt(t3))
                         || ((Integer.parseInt(t1) == Integer.parseInt(t3)) && (Integer.parseInt(t4) >= Integer.parseInt(t2)))){
@@ -230,6 +236,7 @@ public class MainFragment extends Fragment {
                     values.put("startTime", t1 + ":" + t2);
                     values.put("endTime", t3 + ":" + t4);
                     values.put("week",week);
+                    values.put("category",t5);
                     db.insert("Course",null,values);
 //                String name ="";
 //                //Cursor cursor = db.query("Course", null, null, null, null, null, null);
